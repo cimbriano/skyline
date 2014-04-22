@@ -1,0 +1,18 @@
+
+Midi Messages
+* See what happens to (@time and @delta) when two notes are played at the same time
+  - Also what happens when one note starts, then another starts and stops before the first finishes
+
+Stored Midi Format
+* CSV Output of something like ev.inspect or a custom ev.to_s
+
+
+Object Model
+* Building has layers... 
+
+SCAD
+* Consider using different patterns instead of only windows
+* Buildings could have layers determined by the number of octaves of its note there was played
+  - Layer height could be buidling height divided by number of layers
+  - Layer width could be a feature of the music
+  - Layer might have many rows of windows or just one set of tall windows

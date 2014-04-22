@@ -11,6 +11,7 @@ open(filename) do |f|
   mr = Midifile.new f
 
     mr.each do |ev|
-        puts ev
+      puts ev.inspect
+    
     end
 end

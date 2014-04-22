@@ -1,5 +1,5 @@
-module window(width, depth, height, trans_x, trans_y, trans_z){
+module window(x, y, z, trans_x, trans_y, trans_z){
   translate([trans_x, trans_y, trans_z]) {
-    cube([width, depth, height], false);
+    cube([x, y, z], false);
   }
 }

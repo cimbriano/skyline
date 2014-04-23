@@ -102,13 +102,13 @@ if String.instance_methods.include?(:getbyte) then
         end
     end
  end
- 
+
 else	#1.8.x or earlier...
 
  class MString < String
  end
- 
-end 
+
+end
 
 ##############################
 
@@ -116,7 +116,7 @@ end
 module MidifileOps
 
 	# readByte() should be defined in class appropriately
-	
+
 	# Read a sixteen bit value.
 	def read16
 		val = (readByte() << 8) + readByte()
@@ -178,6 +178,7 @@ end ### module MidifileOps
 
 class MidiItem
 	include MidifileOps
+
 	def initialize(code, trkno=nil, time=nil, delta=0)
 		@code = code
 		@trkno = trkno
@@ -225,7 +226,7 @@ class MidiHeader < MidiItem
 	end
 	def to_bytes
 		'MThd' << bytes4(6) << bytes2(@format) <<
-			bytes2(@ntrks) << bytes2(@division) 
+			bytes2(@ntrks) << bytes2(@division)
 	end
 end ### MidiHeader
 

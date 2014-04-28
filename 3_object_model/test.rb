@@ -1,3 +1,4 @@
+require './model.rb'
 require './models.rb'
 
 

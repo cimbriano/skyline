@@ -1,5 +1,3 @@
-require './model.rb'
-
 class Area < Model
   include Scadable
 

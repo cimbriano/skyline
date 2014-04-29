@@ -1,18 +1,32 @@
 require './model.rb'
 require './models.rb'
 
+require 'json'
+
+features_from_file = {}
+
+File.open('features.json') do |f|
+  features_from_file = JSON.load(f)
+end
+
+puts features_from_file
+
+
+features = {
+  building_height: 22,
+  building_width: 11,
+  layers_per_building: 4
+}
 
 
 a = Area.new(50, 100)
 
-(10..20).each do |x|
+# (10..20).each do |x|
+(20..21).each do |x|
   b = Building.new(x, (x * 2), 3)
 
   # Default window parameters
-  b.make_windows
-
-  # TODO Resume here!
-  puts "Building has #{b.windows.size} windows"
+  b.make_layers(features[:layers_per_building])
 
   a.add_building(b)
 end

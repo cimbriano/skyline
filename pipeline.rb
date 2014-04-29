@@ -96,9 +96,7 @@ class Pipeline
 
     def stats
       puts "Doing stats stage for #{@filename}"
-      notes_file = "#{out_dir}/notes_file_#{basename}.csv"
-
-      #
+      # Probably something like exec('python [options] notes_file stats_file')
     end
 
     def stats_file

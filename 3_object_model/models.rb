@@ -95,8 +95,12 @@ class Building < Model
   def make_layers(num_layers = 1)
     layer_height = height / num_layers
 
+    start_pos_y = 0 # First layer at 0
+
     num_layers.times do
-      layers << Layer.new(width, layer_height, depth)
+      layers << Layer.new(width, layer_height, depth, 0, start_pos_y, 0)
+
+      start_pos_y += layer_height # Add last layer height to find start of next layer
     end
   end
 
@@ -146,55 +150,17 @@ class Building < Model
   # end
 
 
-  # def windows
-  #   @window ||= []
-  # end
-
-
   def to_scad
     scad = []
     scad.tap do |s|
+      s << "union() {"
 
-      s << "difference() {"
-        s << "union() {"
-          s << "building(#{@width}, #{@height}, #{@depth});"
+      layers.each do |l|
+        s << l.to_scad
+      end
 
-          outie_windows.each do |outie|
-            s << outie.to_scad
-          end
-
-          s << "}" # Closes Union
-
-        innie_windows.each do |innie|
-          s << innie.to_scad
-        end
-
-        first_layer, *tail_layers = layers
-        tail_layers.each do |l|
-          s << l.to_scad
-        end
-
-      s << "}" # Closes Difference
-
+      s << "}"
     end
-  end
-
-  def innie_windows
-    innies = []
-    layers.each do |l|
-      innies << l.windows.select {|w| w.innie?}
-    end
-
-    innies.flatten
-  end
-
-  def outie_windows
-    outies = []
-    layers.each do |l|
-      outies << l.windows.select {|w| w.outie?}
-    end
-
-    outies.flatten
   end
 
 end
@@ -208,11 +174,15 @@ class Layer
 
   attr_accessor :building_depth
 
-  def initialize(x, y, building_depth)
+  def initialize(x, y, building_depth, trans_x, trans_y, trans_z)
     @width = x
     @height = y
 
-    @depth = 1 # Thickness of layer groove
+    @trans_x = trans_x
+    @trans_y = trans_y
+    @trans_z = trans_z
+
+    # @depth = 1 # Thickness of layer groove
 
     @window_gutter_x = 1
     @window_gutter_y = 1
@@ -263,6 +233,8 @@ class Layer
     top_window_y.step(vertical_minimum, -(window_height + window_gutter_y)) do |y|
       puts "y : #{y}"
 
+      window_y_trans = y + @trans_y # Windiow's relative position (y) plus the layer's translation (trans_y)
+
       (start_pos_x..horizontal_maximum).step(window_width + window_gutter_x) do |x|
         puts "x : #{x}"
 
@@ -270,18 +242,76 @@ class Layer
 
         in_or_out = [true, false].sample
 
-        windows << Window.new(window_width, window_height, window_depth, x, y, building_depth - window_depth, in_or_out)
+        windows << Window.new(window_width, window_height, window_depth, x, window_y_trans, building_depth - window_depth, in_or_out)
 
       end
     end
   end
 
-  def trans_z
-    building_depth - 1
+  def innie_windows
+    windows.select {|w| w.innie?}
   end
 
+  def outie_windows
+    windows.select {|w| w.outie?}
+  end
+
+  # def trans_z
+  #   building_depth - 1
+  # end
+
+
+
+        # s << "difference() {"
+        #   s << "union() {"
+        #
+        #
+        #     s << "layer();"
+        #     s << "building(#{@width}, #{@height}, #{@depth});"
+        #
+        #     outie_windows.each do |outie|
+        #       s << outie.to_scad
+        #     end
+        #
+        #     s << "}" # Closes Union
+        #
+        #   innie_windows.each do |innie|
+        #     s << innie.to_scad
+        #   end
+        #
+        #   first_layer, *tail_layers = layers
+        #   tail_layers.each do |l|
+        #     s << l.to_scad
+        #   end
+        #
+        # s << "}" # Closes Difference
+
+
   def to_scad
-    "layer_divider(#{width}, #{1}, #{depth}, #{0}, #{height}, #{trans_z});"
+    scad = []
+
+    scad.tap do |s|
+      s << "difference(){"
+
+        s << "union(){"
+
+          s << "layer(#{width}, #{height}, #{building_depth}, #{@trans_x}, #{@trans_y}, #{@trans_z});"
+
+          innie_windows.each do |innie|
+            s << innie.to_scad
+          end
+
+        s << "}" # Closes union
+
+        outie_windows.each do |outie|
+          s << outie.to_scad
+        end
+
+      s << "}" # Closes difference
+    end
+
+
+    # "layer_(#{width}, #{1}, #{depth}, #{0}, #{height}, #{trans_z});"
   end
 end
 

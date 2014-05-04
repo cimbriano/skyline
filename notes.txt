@@ -8,7 +8,7 @@ Stored Midi Format
 
 
 Object Model
-* Building has layers... 
+* Building has layers...
 
 SCAD
 * Consider using different patterns instead of only windows
@@ -16,3 +16,7 @@ SCAD
   - Layer height could be buidling height divided by number of layers
   - Layer width could be a feature of the music
   - Layer might have many rows of windows or just one set of tall windows
+
+
+TODO
+  * Need to redo layout of windows inside a layer (too much space at the bottom of the layer)

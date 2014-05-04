@@ -15,7 +15,7 @@ puts features_from_file
 features = {
   building_height: 22,
   building_width: 11,
-  layers_per_building: 4
+  layers_per_building: 2
 }
 
 

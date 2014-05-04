@@ -1,20 +1,28 @@
 require 'fileutils'
+require 'json'
 
 require './1_midi/lib/midifile/midifile.rb'
 require './1_midi/note.rb'
 
 require './3_object_model/model.rb'
 require './3_object_model/models.rb'
+require './3_object_model/midi.rb'
+require './3_object_model/stats.rb'
+require './3_object_model/scad.rb'
+
 
 
 class Pipeline
-
+  include MIDI
+  # include STATS
+  include SCAD
 
   def initialize(path_to_src)
     @src_path = path_to_src
   end
 
   def run(opts)
+    sanity_check
     setup
     midi  if opts[:midi]  || opts[:all]
     stats if opts[:stats] || opts[:all]
@@ -22,6 +30,17 @@ class Pipeline
   end
 
   private
+    def sanity_check
+      puts "=========="
+      puts "src_path is: #{@src_path}"
+      puts "out_dir is: #{out_dir}"
+      puts "midi file is: #{midi_file}"
+      puts "notes file is: #{notes_file}"
+      puts "stats file is: #{stats_file}"
+      puts "scad file is: #{scad_file}"
+      puts "=========="
+    end
+
     def setup
       # Make sure out directory exists
       FileUtils::mkdir_p out_dir
@@ -44,73 +63,38 @@ class Pipeline
       File.write(notes_file, contents)
     end
 
-
-    def make_note_list_from_midi_file(src_path)
-      note_buffer = {}
-      note_list = []
-
-      open(src_path) do |f|
-        mr = Midifile.new f
-
-          mr.each do |item|
-
-            if item.code == NOTE_ON then
-              if note_buffer.include? item.data1 then
-                raise "Found two consecutive ON for note: #{item.data1}"
-              else
-                note_buffer[item.data1] = item
-              end
-
-            elsif item.code == NOTE_OFF
-
-              if note_buffer.include? item.data1 then
-                # Create a Note
-                n = Note.new(note_buffer[item.data1], item)
-
-                # Append it to a list of Note
-                note_list << n
-
-                # Remove from Buffer
-                note_buffer.delete(item.data1)
-              else
-                raise "Found an OFF without an ON for note: #{item.data1}"
-              end
-            end
-
-            puts item.inspect
-          end
-      end
-
-      note_list
-    end
-
     def midi_file
       @src_path
     end
 
     def notes_file
-      "#{out_dir}/notes_file_#{basename}.csv"
+      "#{out_dir}/notes_#{basename}.csv"
     end
 
     # STATS Section
 
     def stats
-      puts "Doing stats stage for #{@filename}"
+      puts "Doing stats stage for #{@src_path}"
+
       # Probably something like exec('python [options] notes_file stats_file')
+      # TODO BEWARE! exec ends and kills this process (i think.)
     end
 
     def stats_file
-      "#{out_dir}/stats_#{basename}"
+      "#{out_dir}/stats_#{basename}.json"
     end
 
     # SCAD Section
 
     def scad
-      puts "Doing scad stage for #{@filename}"
+      puts "Doing scad stage for #{@src_path}"
+      features = get_features(stats_file)
+      model = make_area_from_features(features)
+      model.write_out_code(scad_file)
     end
 
     def scad_file
-      "#{out_dir}/scad_#{basename}"
+      "#{out_dir}/scad_#{basename}.scad"
     end
 
 

@@ -19,7 +19,7 @@ features = {
 }
 
 
-a = Area.new(50, 100)
+a = Area.new(10, 50)
 
 # (10..20).each do |x|
 (20..21).each do |x|

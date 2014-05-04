@@ -17,7 +17,7 @@ class Area < Model
     buildings << b
 
     # Check if width of all buildings (plus gutter space) exceeds the area width
-    width = required_area_width if @width < required_area_width
+    @width = required_area_width if @width < required_area_width
 
   end
 

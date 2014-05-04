@@ -7,7 +7,7 @@ end
 module Scadable
   @@scad_libs = ['area.scad', 'layer.scad', 'layer_divider.scad', 'window.scad']
 
-  def write_out_code
+  def write_out_code(outfile='out.scad')
     header = []
 
     @@scad_libs.each do |lib|
@@ -18,6 +18,6 @@ module Scadable
 
     contents = header + to_scad
 
-    File.write('out.scad', contents.join("\n"))
+    File.write(outfile, contents.join("\n"))
   end
 end

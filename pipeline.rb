@@ -7,14 +7,12 @@ require './1_midi/note.rb'
 require './3_object_model/model.rb'
 require './3_object_model/models.rb'
 require './3_object_model/midi.rb'
-require './3_object_model/stats.rb'
 require './3_object_model/scad.rb'
 
 
 
 class Pipeline
   include MIDI
-  # include STATS
   include SCAD
 
   def initialize(path_to_src)
@@ -38,7 +36,6 @@ class Pipeline
       puts "notes file is: #{notes_file}"
       puts "stats file is: #{stats_file}"
       puts "scad file is: #{scad_file}"
-      puts "=========="
     end
 
     def setup
@@ -47,6 +44,7 @@ class Pipeline
     end
 
     def midi
+      puts "=========="
       puts "Doing midi stage for #{@src_path}"
       puts "Reading: #{midi_file}"
 
@@ -74,10 +72,13 @@ class Pipeline
     # STATS Section
 
     def stats
+      puts "=========="
       puts "Doing stats stage for #{@src_path}"
 
-      # Probably something like exec('python [options] notes_file stats_file')
-      # TODO BEWARE! exec ends and kills this process (i think.)
+      options = ""
+
+      # This python script reads from notes_files and writes to stats_file
+      `python #{options} ./2_stats/stats.py #{notes_file} #{stats_file}"`
     end
 
     def stats_file
@@ -87,6 +88,7 @@ class Pipeline
     # SCAD Section
 
     def scad
+      puts "=========="
       puts "Doing scad stage for #{@src_path}"
       features = get_features(stats_file)
       model = make_area_from_features(features)

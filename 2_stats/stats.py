@@ -8,7 +8,7 @@ Created on Apr 29, 2014
 import argparse
 import pandas as pd
 import numpy as np
-
+import json
 
 def freneticity(col):
     return np.diff(col).mean()
@@ -43,7 +43,13 @@ def main():
     fren.name = 'freneticity'
     
     ans  = pd.concat([cnt, avgVel, avgLen, fren], axis=1)
-    ans.to_json(stats_file,orient='index')
+    for (letter,octave), v in ans.iterrows():
+	    if not ansdict.has_key(letter): 
+	        ansdict[letter] = {}
+	    ansdict[letter][octave] = v.to_dict()
+    
+    with open(stats_file, 'w') as stats_json:
+    	json.dump(ansdict, stats_json)
 
 
 if __name__ == '__main__':

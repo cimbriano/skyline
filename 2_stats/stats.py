@@ -24,6 +24,8 @@ def main():
                         help='aggregation mode')
     args = parser.parse_args()
    
+   	note_file = args.note_file
+   	stats_file = args.stats_file
     
     note_df = pd.read_csv(note_file)
     agg_df = note_df.groupby(['letter','octave'])

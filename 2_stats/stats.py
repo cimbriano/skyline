@@ -44,6 +44,7 @@ def main():
     sumagg_df = note_df.groupby(['letter'])
     sumcnt = sumagg_df.letter.count()
     sumavgLen = sumagg_df.duration.mean()
+    sumtotLen = sumagg_df.duration.sum()
     sumavgVel = sumagg_df.velocity.mean()
     sumfreq = (sumcnt * 1000.0)/(sumagg_df.time_off.max()-sumagg_df.time_on.min())
     sumOctCount = sumagg_df.octave.nunique()
@@ -51,6 +52,7 @@ def main():
 
     sumcnt.name = 'count'
     sumavgLen.name = 'avgLen'
+    sumtotLen.name = 'totLen'
     sumavgVel.name = 'avgVel'
     sumfreq.name = 'frequency'
     sumOctCount.name = 'octave_count'
@@ -59,6 +61,7 @@ def main():
     agg_df = note_df.groupby(['letter','octave'])
     cnt = agg_df.letter.count()
     avgLen = agg_df.duration.mean()
+    totLen = agg_df.duration.sum()
     avgVel = agg_df.velocity.mean()
     freq = (cnt*1000.0)/(agg_df.time_off.max()-agg_df.time_on.min())
     # timeBtwn = agg_df.time_on.apply(freneticity)
@@ -67,12 +70,13 @@ def main():
     
     cnt.name = 'count'
     avgLen.name = 'avgLen'
+    totLen.name = 'totLen'
     avgVel.name = 'avgVel'
     freq.name = 'frequency'
     # timeBtwn.name = 'timeBetween'
     
-    ans  = pd.concat([cnt, avgVel, avgLen, freq], axis=1)
-    sumans  = pd.concat([sumcnt, sumavgVel, sumavgLen, sumfreq, sumOctRange, sumOctCount], axis=1)
+    ans  = pd.concat([cnt, avgVel, avgLen, totLen, freq], axis=1)
+    sumans  = pd.concat([sumcnt, sumavgVel, sumavgLen, sumtotLen, sumfreq, sumOctRange, sumOctCount], axis=1)
     songans = {'length' : song_length, 'notes_per_sec':notes_per_sec, 'total_notes':total_notes, 
                'avgLen':song_avg_len, 'avgVel':song_avg_vel, 'high_note':high_note, 'low_note':low_note,'note_range':note_range}
     ansdict = {'song':{}, 'instruments':{},'notes':{}}

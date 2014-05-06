@@ -51,7 +51,7 @@ def main():
 
     sumcnt.name = 'count'
     sumavgLen.name = 'avgLen'
-    sumavgVel.name = 'avgVelocity'
+    sumavgVel.name = 'avgVel'
     sumfreq.name = 'frequency'
     sumOctCount.name = 'octave_count'
     sumOctRange.name = 'octave_range'
@@ -67,7 +67,7 @@ def main():
     
     cnt.name = 'count'
     avgLen.name = 'avgLen'
-    avgVel.name = 'avgVelocity'
+    avgVel.name = 'avgVel'
     freq.name = 'frequency'
     # timeBtwn.name = 'timeBetween'
     

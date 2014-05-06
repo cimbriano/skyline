@@ -36,7 +36,7 @@ module SCAD
       b = Building.new(buidling_width, building_height, building_depth)
 
       # puts "#{note_hash}"
-      b.make_layers(note_hash['octaves'])
+      b.make_layers(note_hash)
 
       main_area.add_building(b)
     end

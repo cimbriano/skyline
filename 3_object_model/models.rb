@@ -102,13 +102,13 @@ class Building < Model
   def make_layers(hash)
 
 
-    num_layers = hash.length
+    num_layers = hash['octaves'].length # octaves hash for now
 
     puts "Making #{num_layers} layers"
 
-    hash.each do |key, feature_hash|
+    hash['octaves'].each do |key, octave_hash|
 
-      layer_height = height / num_layers
+      layer_height = height * (octave_hash['totLen'] / hash['summary']['totLen'])
 
       layers[key] = Layer.new(width, layer_height, depth)
     end
@@ -121,31 +121,20 @@ class Building < Model
     scad = []
     scad.tap do |s|
 
-
-
-      s << "difference() {"
-
         s << "union() {"
 
         layer_start_y_pos = 0 # First layer at y position = 0
-        layer_count = 0
+
         layers.each do |key, layer|
 
+          s << "layer_divider(#{width}, #{1}, #{1}, #{0}, #{layer_start_y_pos}, #{depth});"
           s << layer.to_scad(layer_start_y_pos)
 
-          layer_dividers << "layer_divider(#{width}, #{1}, #{1}, #{0}, #{layer_start_y_pos}, #{depth - 1});" if layer_count > 0
 
           layer_start_y_pos += layer.height
-          layer_count += 1
         end
 
         s << "}" # Closes union
-
-        layer_dividers.each do |divider|
-          s << divider
-        end
-
-      s << "}" # Close difference
 
     end
 
@@ -165,8 +154,6 @@ class Layer
   def initialize(x, y, building_depth)
     @width = x
     @height = y
-
-    # @depth = 1 # Thickness of layer groove
 
     @window_gutter_x = 1
     @window_gutter_y = 1

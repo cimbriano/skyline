@@ -29,6 +29,7 @@ def main():
     note_file = args.note_file
     stats_file = args.stats_file
     
+    print "Reading notes from: " + note_file
     note_df = pd.read_csv(note_file)
 
     song_length = (note_df.time_off.max() - note_df.time_on.min()) / 1000.0
@@ -46,7 +47,7 @@ def main():
     sumavgVel = sumagg_df.velocity.mean()
     sumfreq = (sumcnt * 1000.0)/(sumagg_df.time_off.max()-sumagg_df.time_on.min())
     sumOctCount = sumagg_df.octave.nunique()
-    sumOctRange = sumagg_df.octave.max()-sumagg_df.octave.min()
+    sumOctRange = sumagg_df.octave.max()-sumagg_df.octave.min() + 1
 
     sumcnt.name = 'count'
     sumavgLen.name = 'avgLen'
@@ -78,18 +79,16 @@ def main():
 
     for (letter,octave), r in ans.iterrows():
         if not ansdict.has_key(letter): 
-            ansdict['notes'][letter] = {}
-        ansdict['notes'][letter][octave] = r.to_dict()
+            ansdict['notes'][letter] = {'octaves': {}}
+        ansdict['notes'][letter]['octaves'][octave] = r.to_dict()
     
     for letter, row in sumans.iterrows():
         ansdict['notes'][letter]['summary'] = row.to_dict()
     ansdict['song']['summary'] = songans
 
     with open(stats_file, 'w') as stats_json:
-        print "printing " + stats_file
-
+        print "Writing json to: " + stats_file
         json.dump(ansdict, stats_json)
-
 
 if __name__ == '__main__':
     main()

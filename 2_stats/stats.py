@@ -78,7 +78,7 @@ def main():
     ansdict = {'song':{}, 'instruments':{},'notes':{}}
 
     for (letter,octave), r in ans.iterrows():
-        if not ansdict.has_key(letter): 
+        if not ansdict['notes'].has_key(letter): 
             ansdict['notes'][letter] = {'octaves': {}}
         ansdict['notes'][letter]['octaves'][octave] = r.to_dict()
     

@@ -89,18 +89,23 @@ class Building < Model
   end
 
   def layers
-    @layers ||= []
+    @layers ||= {}
   end
 
-  def make_layers(num_layers = 1)
-    layer_height = height / num_layers
+  # hash has keys for each layer for this building.
+  def make_layers(hash)
+    num_layers = hash.length
 
-    start_pos_y = 0 # First layer at 0
+    start_pos_y = 0 # First layer at y position = 0
 
-    num_layers.times do
-      layers << Layer.new(width, layer_height, depth, 0, start_pos_y, 0)
+    hash.each do |key, feature_hash|
+      # width = ?
+      layer_height = height / num_layers
+
+      layers[key] = Layer.new(width, layer_height, depth, 0, start_pos_y, 0)
 
       start_pos_y += layer_height # Add last layer height to find start of next layer
+
     end
   end
 

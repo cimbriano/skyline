@@ -5,8 +5,12 @@ require 'debugger'
 require './1_midi/lib/midifile/midifile.rb'
 require './1_midi/note.rb'
 
-require './3_object_model/model.rb'
-require './3_object_model/models.rb'
+
+require './3_object_model/area.rb'
+require './3_object_model/building.rb'
+require './3_object_model/layer.rb'
+require './3_object_model/window.rb'
+
 require './3_object_model/midi.rb'
 require './3_object_model/scad.rb'
 

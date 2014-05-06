@@ -9,7 +9,6 @@ import argparse
 import pandas as pd
 import numpy as np
 import json
-import os
 
 # def freneticity(col):
 #     return np.diff(col).mean()
@@ -74,7 +73,7 @@ def main():
     ans  = pd.concat([cnt, avgVel, avgLen, freq], axis=1)
     sumans  = pd.concat([sumcnt, sumavgVel, sumavgLen, sumfreq, sumOctRange, sumOctCount], axis=1)
     songans = {'length' : song_length, 'notes_per_sec':notes_per_sec, 'total_notes':total_notes, 
-               'avgLen':avgLen, 'avgVel':avgVel, 'high_note':high_note, 'low_note':low_note,'note_range':note_range}
+               'avgLen':song_avg_len, 'avgVel':song_avg_vel, 'high_note':high_note, 'low_note':low_note,'note_range':note_range}
     ansdict = {}
 
     for (letter,octave), r in ans.iterrows():
@@ -87,6 +86,8 @@ def main():
     ansdict['summary'] = songans
 
     with open(stats_file, 'w') as stats_json:
+        print "printing " + stats_file
+
         json.dump(ansdict, stats_json)
 
 

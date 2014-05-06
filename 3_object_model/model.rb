@@ -11,7 +11,7 @@ module Scadable
     header = []
 
     @@scad_libs.each do |lib|
-      header << "use <../4_openscad/#{lib}>;"
+      header << "use <../../4_openscad/#{lib}>;"
     end
 
     header << "" # New line

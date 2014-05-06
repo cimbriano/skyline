@@ -78,7 +78,8 @@ class Pipeline
       options = ""
 
       # This python script reads from notes_files and writes to stats_file
-      `python #{options} ./2_stats/stats.py #{notes_file} #{stats_file}`
+      result = `python #{options} ./2_stats/stats.py #{notes_file} #{stats_file}`
+      puts result
     end
 
     def stats_file
@@ -90,8 +91,10 @@ class Pipeline
     def scad
       puts "=========="
       puts "Doing scad stage for #{@src_path}"
-      features = get_features(stats_file)
-      model = make_area_from_features(features)
+      stats_hash = get_stats_hash(stats_file)
+
+      model = make_model_from_stats_hash(stats_hash)
+
       model.write_out_code(scad_file)
     end
 

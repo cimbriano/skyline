@@ -94,12 +94,15 @@ class Building < Model
 
   # hash has keys for each layer for this building.
   def make_layers(hash)
+
+
     num_layers = hash.length
 
+    puts "Making #{num_layers} layers"
     start_pos_y = 0 # First layer at y position = 0
 
     hash.each do |key, feature_hash|
-      # width = ?
+
       layer_height = height / num_layers
 
       layers[key] = Layer.new(width, layer_height, depth, 0, start_pos_y, 0)
@@ -109,59 +112,13 @@ class Building < Model
     end
   end
 
-  # def make_windows(opts = {})
-  #   window_width = opts[:window_width] || 4
-  #   window_height = opts[:window_height] || 4
-  #
-  #   puts "height: #{height}"
-  #   puts "width : #{width}"
-  #   puts "window_width : #{window_width}"
-  #   puts "window_height : #{window_height}"
-  #
-  #   # How many windows fit
-  #   num_windows_across = (width - (2 * border_x) + window_gutter_x) / (window_width + window_gutter_x)
-  #   num_windows_down   = (height - (2 * border_y) + window_gutter_y) / (window_height + window_gutter_y)
-  #
-  #   puts "!Windows across : #{num_windows_across}"
-  #   puts "!Windows down :   #{num_windows_down}"
-  #
-  #   # How much extra space for the left and right most edge gutter
-  #   horizontal_used_space = (num_windows_across * window_width) + ((num_windows_across - 1) * window_gutter_x)
-  #   puts "Horizontal Space used : #{horizontal_used_space}"
-  #
-  #   start_pos_x = ( (width  - horizontal_used_space).to_f ) / 2
-  #   puts "start_pos_x : #{start_pos_x}"
-  #
-  #   # Bottom left corner of the top most window.
-  #   top_window_y = height - border_y - window_height
-  #   puts "top_window_y : #{top_window_y}"
-  #
-  #   horizontal_maximum = width - (border_x + window_width)
-  #
-  #   vertical_minimum = border_y + window_height
-  #
-  #   top_window_y.step(vertical_minimum, -(window_height + window_gutter_y)) do |y|
-  #     puts "y : #{y}"
-  #
-  #     (start_pos_x..horizontal_maximum).step(window_width + window_gutter_x) do |x|
-  #       puts "x : #{x}"
-  #
-  #       window_depth = 1
-  #
-  #       windows << Window.new(window_width, window_height, window_depth, x, y, depth - window_depth)
-  #
-  #     end
-  #   end
-  # end
-
-
   def to_scad
     scad = []
     scad.tap do |s|
       s << "union() {"
 
-      layers.each do |l|
-        s << l.to_scad
+      layers.each do |key, layer|
+        s << layer.to_scad
       end
 
       s << "}"
@@ -197,7 +154,7 @@ class Layer
 
     @building_depth = building_depth
 
-    make_windows
+    # make_windows
   end
 
   def windows
@@ -208,40 +165,40 @@ class Layer
     window_width = opts[:window_width] || 4
     window_height = opts[:window_height] || 4
 
-    puts "height: #{height}"
-    puts "width : #{width}"
-    puts "window_width : #{window_width}"
-    puts "window_height : #{window_height}"
+    # puts "height: #{height}"
+    # puts "width : #{width}"
+    # puts "window_width : #{window_width}"
+    # puts "window_height : #{window_height}"
 
     # How many windows fit
     num_windows_across = (width - (2 * border_x) + window_gutter_x) / (window_width + window_gutter_x)
     num_windows_down   = (height - (2 * border_y) + window_gutter_y) / (window_height + window_gutter_y)
 
-    puts "!Windows across : #{num_windows_across}"
-    puts "!Windows down :   #{num_windows_down}"
+    # puts "!Windows across : #{num_windows_across}"
+    # puts "!Windows down :   #{num_windows_down}"
 
     # How much extra space for the left and right most edge gutter
     horizontal_used_space = (num_windows_across * window_width) + ((num_windows_across - 1) * window_gutter_x)
-    puts "Horizontal Space used : #{horizontal_used_space}"
+    # puts "Horizontal Space used : #{horizontal_used_space}"
 
     start_pos_x = ( (width  - horizontal_used_space).to_f ) / 2
-    puts "start_pos_x : #{start_pos_x}"
+    # puts "start_pos_x : #{start_pos_x}"
 
     # Bottom left corner of the top most window.
     top_window_y = height - border_y - window_height
-    puts "top_window_y : #{top_window_y}"
+    # puts "top_window_y : #{top_window_y}"
 
     horizontal_maximum = width - (border_x + window_width)
 
     vertical_minimum = border_y + window_height
 
     top_window_y.step(vertical_minimum, -(window_height + window_gutter_y)) do |y|
-      puts "y : #{y}"
+      # puts "y : #{y}"
 
       window_y_trans = y + @trans_y # Windiow's relative position (y) plus the layer's translation (trans_y)
 
       (start_pos_x..horizontal_maximum).step(window_width + window_gutter_x) do |x|
-        puts "x : #{x}"
+        # puts "x : #{x}"
 
         window_depth = 1
 

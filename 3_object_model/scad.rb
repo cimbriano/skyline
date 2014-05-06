@@ -15,6 +15,8 @@ module SCAD
 
   def make_model_from_stats_hash(stats)
 
+    puts stats
+
     num_of_buildings = stats['notes'].length
     total_notes = stats['song']['summary']['total_notes']
 
@@ -25,18 +27,21 @@ module SCAD
 
       puts "Making building for #{note}"
 
-      building_height = note_hash[note]['summary']['avgVel']
-      buidling_width  = note_hash[note]['summary']['avgLen']
+      building_height = (50 * (note_hash['summary']['count'] / total_notes) + 20
+      buidling_width  = note_hash['summary']['avgLen']
 
       # Mapping the percentage of this note to a range of 3 - 9
-      building_depth  = 6 * (note_hash['summary']['count'] / total_notes) + 3
+      building_depth  = (6 * (note_hash['summary']['count'] / total_notes)) + 3
 
-      b = Building.new(building_height, buidling_width, building_depth)
-      b.make_layers(note_hash)
+      b = Building.new(buidling_width, building_height, building_depth)
 
+      # puts "#{note_hash}"
+      b.make_layers(note_hash['octaves'])
+
+      main_area.add_building(b)
     end
 
-
+    main_area
   end
 
 

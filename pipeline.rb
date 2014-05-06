@@ -54,7 +54,7 @@ class Pipeline
       # TODO  Get this info from the meta items
 
       # Write out notes file
-      contents = "letter,octave,velocity,time_on,time_off,duration" + "\n"
+      contents = "letter,octave,velocity,time_on,time_off,duration,note_number" + "\n"
       contents += note_list.map(&:to_csv).join("\n")
 
       puts "Writing notes file: #{notes_file}"

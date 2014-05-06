@@ -32,6 +32,7 @@ module MIDI
             end
           end
 
+          # puts item.inspect
         end
     end
 

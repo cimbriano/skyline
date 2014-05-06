@@ -20,3 +20,7 @@ SCAD
 
 TODO
   * Need to redo layout of windows inside a layer (too much space at the bottom of the layer)
+
+
+IDEA:
+  * Make difference and union functions which take blocks that wrap the block in union or difference

@@ -105,30 +105,50 @@ class Building < Model
     num_layers = hash.length
 
     puts "Making #{num_layers} layers"
-    start_pos_y = 0 # First layer at y position = 0
 
     hash.each do |key, feature_hash|
 
       layer_height = height / num_layers
 
-      layers[key] = Layer.new(width, layer_height, depth, 0, start_pos_y, 0)
-
-      start_pos_y += layer_height # Add last layer height to find start of next layer
-
+      layers[key] = Layer.new(width, layer_height, depth)
     end
   end
 
   def to_scad
+    layer_dividers = []
+
+
     scad = []
     scad.tap do |s|
-      s << "union() {"
 
-      layers.each do |key, layer|
-        s << layer.to_scad
-      end
 
-      s << "}"
+
+      s << "difference() {"
+
+        s << "union() {"
+
+        layer_start_y_pos = 0 # First layer at y position = 0
+        layer_count = 0
+        layers.each do |key, layer|
+
+          s << layer.to_scad(layer_start_y_pos)
+
+          layer_dividers << "layer_divider(#{width}, #{1}, #{1}, #{0}, #{layer_start_y_pos}, #{depth - 1});" if layer_count > 0
+
+          layer_start_y_pos += layer.height
+          layer_count += 1
+        end
+
+        s << "}" # Closes union
+
+        layer_dividers.each do |divider|
+          s << divider
+        end
+
+      s << "}" # Close difference
+
     end
+
   end
 
 end
@@ -142,13 +162,9 @@ class Layer
 
   attr_accessor :building_depth
 
-  def initialize(x, y, building_depth, trans_x, trans_y, trans_z)
+  def initialize(x, y, building_depth)
     @width = x
     @height = y
-
-    @trans_x = trans_x
-    @trans_y = trans_y
-    @trans_z = trans_z
 
     # @depth = 1 # Thickness of layer groove
 
@@ -170,6 +186,7 @@ class Layer
   def make_windows(opts = {})
     window_width = opts[:window_width] || 4
     window_height = opts[:window_height] || 4
+
 
     # puts "height: #{height}"
     # puts "width : #{width}"
@@ -224,38 +241,7 @@ class Layer
     windows.select {|w| w.outie?}
   end
 
-  # def trans_z
-  #   building_depth - 1
-  # end
-
-
-
-        # s << "difference() {"
-        #   s << "union() {"
-        #
-        #
-        #     s << "layer();"
-        #     s << "building(#{@width}, #{@height}, #{@depth});"
-        #
-        #     outie_windows.each do |outie|
-        #       s << outie.to_scad
-        #     end
-        #
-        #     s << "}" # Closes Union
-        #
-        #   innie_windows.each do |innie|
-        #     s << innie.to_scad
-        #   end
-        #
-        #   first_layer, *tail_layers = layers
-        #   tail_layers.each do |l|
-        #     s << l.to_scad
-        #   end
-        #
-        # s << "}" # Closes Difference
-
-
-  def to_scad
+  def to_scad(trans_y)
     scad = []
 
     scad.tap do |s|
@@ -263,7 +249,7 @@ class Layer
 
         s << "union(){"
 
-          s << "layer(#{width}, #{height}, #{building_depth}, #{@trans_x}, #{@trans_y}, #{@trans_z});"
+          s << "layer(#{width}, #{height}, #{building_depth}, 0, #{trans_y}, 0);"
 
           innie_windows.each do |innie|
             s << innie.to_scad
@@ -277,9 +263,6 @@ class Layer
 
       s << "}" # Closes difference
     end
-
-
-    # "layer_(#{width}, #{1}, #{depth}, #{0}, #{height}, #{trans_z});"
   end
 end
 

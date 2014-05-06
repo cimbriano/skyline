@@ -27,7 +27,7 @@ module SCAD
 
       puts "Making building for #{note}"
 
-      building_height = (50 * (note_hash['summary']['count'] / total_notes) + 20
+      building_height = note_hash['summary']['count']
       buidling_width  = note_hash['summary']['avgLen']
 
       # Mapping the percentage of this note to a range of 3 - 9

@@ -18,7 +18,7 @@ class Area < Model
 
     # Check if width of all buildings (plus gutter space) exceeds the area width
     @width = required_area_width if @width < required_area_width
-
+    @height = required_area_height
   end
 
 
@@ -32,6 +32,12 @@ class Area < Model
 
     sum
   end
+
+  def required_area_height
+    buildings.map {|b| b.height }.max + (2 * bldg_spacer)
+  end
+
+
 
   def to_scad
     scad = []

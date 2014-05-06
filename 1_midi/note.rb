@@ -19,7 +19,7 @@ class Note
   end
 
   def to_csv
-    "#{letter},#{octave},#{velocity},#{time_on},#{time_off},#{duration}"
+    "#{letter},#{octave},#{velocity},#{time_on},#{time_off},#{duration},#{note_number}"
   end
 
   private
@@ -45,6 +45,10 @@ class Note
 
     def time_off
       @off.time
+    end
+
+    def note_number
+      @on.data1
     end
 
     def note_names(mod_12)

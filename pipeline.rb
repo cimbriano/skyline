@@ -2,15 +2,6 @@ require 'fileutils'
 require 'json'
 require 'debugger'
 
-require './1_midi/lib/midifile/midifile.rb'
-require './1_midi/note.rb'
-
-
-require './3_object_model/area.rb'
-require './3_object_model/building.rb'
-require './3_object_model/layer.rb'
-require './3_object_model/window.rb'
-
 require './3_object_model/midi.rb'
 require './3_object_model/scad.rb'
 
@@ -99,6 +90,10 @@ class Pipeline
       stats_hash = get_stats_hash(stats_file)
 
       model = make_model_from_stats_hash(stats_hash)
+
+      model.build
+
+      model.scale
 
       model.write_out_code(scad_file)
     end

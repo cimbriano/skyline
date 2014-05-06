@@ -1,3 +1,6 @@
+require './1_midi/lib/midifile/midifile.rb'
+require './1_midi/note.rb'
+
 module MIDI
   def make_note_list_from_midi_file(midifile)
 

@@ -1,17 +1,46 @@
 require './3_object_model/model.rb'
+require './3_object_model/building.rb'
 
 class Area < Model
   include Scadable
 
-  attr_accessor :height, :width, :bldg_spacer
+  attr_accessor :height, :width, :bldg_spacer, :stats
 
   # has_many
   attr_accessor :buildings
 
-  def initialize(w, h)
-    @height = h
-    @width = w
+  def initialize(stats)
+    @stats = stats
+    @height = 10 # default
+    @width = 10 # default
     @bldg_spacer = 5
+  end
+
+  def build
+
+    num_of_buildings = stats['notes'].length
+    total_notes = stats['song']['summary']['total_notes']
+
+    stats['notes'].each do |note, note_hash| # number of buidlings to make
+
+      puts "Making building for #{note}"
+
+      building_height = note_hash['summary']['count']
+      buidling_width  = note_hash['summary']['avgLen']
+
+      # Mapping the percentage of this note to a range of 3 - 9
+      building_depth  = (6 * (note_hash['summary']['count'] / total_notes)) + 3
+
+      b = Building.new(buidling_width, building_height, building_depth)
+
+      # puts "#{note_hash}"
+      b.make_layers(note_hash)
+
+      add_building(b)
+    end
+  end
+
+  def scale
   end
 
 
@@ -38,8 +67,6 @@ class Area < Model
   def required_area_height
     buildings.map {|b| b.height }.max + (2 * bldg_spacer)
   end
-
-
 
   def to_scad
     scad = []

@@ -1,4 +1,5 @@
 require './3_object_model/model.rb'
+require './3_object_model/layer.rb'
 
 class Building < Model
   attr_accessor :height, :width, :depth

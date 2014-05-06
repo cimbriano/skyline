@@ -1,3 +1,5 @@
+require './3_object_model/area.rb'
+
 module SCAD
 
   def default_features
@@ -14,37 +16,8 @@ module SCAD
   end
 
   def make_model_from_stats_hash(stats)
-
-    puts stats
-
-    num_of_buildings = stats['notes'].length
-    total_notes = stats['song']['summary']['total_notes']
-
-
-    main_area = Area.new(10, 50)
-
-    stats['notes'].each do |note, note_hash| # number of buidlings to make
-
-      puts "Making building for #{note}"
-
-      building_height = note_hash['summary']['count']
-      buidling_width  = note_hash['summary']['avgLen']
-
-      # Mapping the percentage of this note to a range of 3 - 9
-      building_depth  = (6 * (note_hash['summary']['count'] / total_notes)) + 3
-
-      b = Building.new(buidling_width, building_height, building_depth)
-
-      # puts "#{note_hash}"
-      b.make_layers(note_hash)
-
-      main_area.add_building(b)
-    end
-
-    main_area
+    main_area = Area.new(stats)
   end
-
-
 
   #
   # def make_area_from_features(features)

@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'json'
+require 'debugger'
 
 require './1_midi/lib/midifile/midifile.rb'
 require './1_midi/note.rb'

@@ -21,12 +21,12 @@ module SCAD
 
     main_area = Area.new(10, 50)
 
-    stats['notes'].each do |note_hash| # number of buidlings to make
+    stats['notes'].each do |note, note_hash| # number of buidlings to make
 
-      debugger
+      puts "Making building for #{note}"
 
-      building_height = note_hash['summary']['avgVelocity']
-      buidling_width  = note_hash['summary']['avgLength']
+      building_height = note_hash[note]['summary']['avgVel']
+      buidling_width  = note_hash[note]['summary']['avgLen']
 
       # Mapping the percentage of this note to a range of 3 - 9
       building_depth  = 6 * (note_hash['summary']['count'] / total_notes) + 3

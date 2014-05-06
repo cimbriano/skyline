@@ -78,7 +78,7 @@ class Pipeline
       options = ""
 
       # This python script reads from notes_files and writes to stats_file
-      `python #{options} ./2_stats/stats.py #{notes_file} #{stats_file}"`
+      `python #{options} ./2_stats/stats.py #{notes_file} #{stats_file}`
     end
 
     def stats_file

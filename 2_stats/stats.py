@@ -74,16 +74,16 @@ def main():
     sumans  = pd.concat([sumcnt, sumavgVel, sumavgLen, sumfreq, sumOctRange, sumOctCount], axis=1)
     songans = {'length' : song_length, 'notes_per_sec':notes_per_sec, 'total_notes':total_notes, 
                'avgLen':song_avg_len, 'avgVel':song_avg_vel, 'high_note':high_note, 'low_note':low_note,'note_range':note_range}
-    ansdict = {}
+    ansdict = {'song':{}, 'instruments':{},'notes':{}}
 
     for (letter,octave), r in ans.iterrows():
         if not ansdict.has_key(letter): 
-            ansdict[letter] = {}
-        ansdict[letter][octave] = r.to_dict()
+            ansdict['notes'][letter] = {}
+        ansdict['notes'][letter][octave] = r.to_dict()
     
     for letter, row in sumans.iterrows():
-        ansdict[letter]['summary'] = row.to_dict()
-    ansdict['summary'] = songans
+        ansdict['notes'][letter]['summary'] = row.to_dict()
+    ansdict['song']['summary'] = songans
 
     with open(stats_file, 'w') as stats_json:
         print "printing " + stats_file

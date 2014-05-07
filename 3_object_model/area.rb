@@ -14,6 +14,8 @@ class Area < Model
     @height = 10 # default
     @width = 10 # default
     @bldg_spacer = 5
+    @max_height = 70
+    @max_width = 140
   end
 
   def build
@@ -41,6 +43,41 @@ class Area < Model
   end
 
   def scale
+    # Get intial area size after all buildings have been created
+    @width = required_area_width if @width < required_area_width
+    @height = required_area_height
+
+    aspect_ratio = @width.to_f / @height
+    yscale_factor = @max_height / @height.to_f
+    xscale_factor = @max_width / @width.to_f 
+
+    #area is too high.  need to scale down
+    #both are higher than max, use yscale_for both nuless its not enough for x
+    if @height > @max_height and @width > @max_width
+      # if scaling in the y is more severe than the x, just use the y
+      if yscale_factor < xscale_factor
+        xscale_factor = yscale_factor
+      end
+    #heights too high, but width doesn't care... 
+    #scale down with y
+    elsif @height > @max_height and @width <= @max_width
+        xscale_factor = yscale_factor
+
+    #too short and wide... scale up y and down x
+    elsif @height <= @max_height and @width > @max_width
+      # nothing here yet
+    
+    #too short and too narrow
+    #scale up y and use that scale for x unless it's too much
+    else
+      if yscale_factor < xscale_factor
+        xscale_factor = yscale_factor
+      end
+    end
+
+    buildings.each do |b|
+      b.scale(xscale_factor, yscale_factor)
+
   end
 
 

@@ -50,6 +50,15 @@ class Building < Model
     end
   end
 
+  def scale(xscale, yscale)
+    @width *= xscale
+    @height *= yscale
+
+    layers.each do |l|
+      l.scale(xscale, yscale)
+
+  end
+
   def to_scad
     layer_dividers = []
 

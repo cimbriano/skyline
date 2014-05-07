@@ -87,6 +87,11 @@ class Layer < Model
     windows.select {|w| w.outie?}
   end
 
+  def scale(xscale, yscale)
+    @height *= yscale
+    @width *= xscale
+  end
+
   def to_scad(trans_y)
     scad = []
 

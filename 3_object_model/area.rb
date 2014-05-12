@@ -4,7 +4,7 @@ require './3_object_model/building.rb'
 class Area < Model
   include Scadable
 
-  attr_accessor :height, :width, :bldg_spacer, :stats
+  attr_accessor :height, :width, :bldg_x_spacer, :bldg_y_spacer, :stats
 
   # has_many
   attr_accessor :buildings
@@ -13,7 +13,8 @@ class Area < Model
     @stats = stats
     @height = 10 # default
     @width = 10 # default
-    @bldg_spacer = 5
+    @bldg_x_spacer = 5
+    @bldg_y_spacer = 10
     @max_height = 70
     @max_width = 140
   end
@@ -25,15 +26,13 @@ class Area < Model
 
     stats['notes'].each do |note, note_hash| # number of buidlings to make
 
-      puts "Making building for #{note}"
-
       building_height = note_hash['summary']['count']
       buidling_width  = note_hash['summary']['avgLen']
 
       # Mapping the percentage of this note to a range of 3 - 9
-      building_depth  = (6 * (note_hash['summary']['count'] / total_notes)) + 3
+      building_depth  = note_hash['summary']['totLenRank']/2 + 3
 
-      b = Building.new(buidling_width, building_height, building_depth)
+      b = Building.new(buidling_width, building_height, building_depth, note)
 
       # puts "#{note_hash}"
       b.make_layers(note_hash)
@@ -75,9 +74,15 @@ class Area < Model
       end
     end
 
+    @bldg_x_spacer *= xscale_factor
+    @bldg_y_spacer *= yscale_factor
+
+    @width *= xscale_factor
+    @height *= yscale_factor
+
     buildings.each do |b|
       b.scale(xscale_factor, yscale_factor)
-
+    end
   end
 
 
@@ -92,31 +97,36 @@ class Area < Model
 
   # TODO Need to take overlap into account
   def required_area_width
-    sum = bldg_spacer
+    sum = bldg_x_spacer
 
     buildings.each do |b|
-      sum += (b.width + bldg_spacer)
+      sum += (b.width + bldg_x_spacer)
     end
 
     sum
   end
 
   def required_area_height
-    buildings.map {|b| b.height }.max + (2 * bldg_spacer)
+    buildings.map {|b| b.height }.max + bldg_y_spacer
   end
+
+
 
   def to_scad
     scad = []
     scad.tap do |s|
       s << "area(#{width}, #{height});"
 
-      left_edge = bldg_spacer
+      buildings.sort! {|b1,b2| note_sorter(b1.note, b2.note)} 
+
+      left_edge = bldg_x_spacer
       buildings.each do |b|
+        puts "writing scad for building #{b.note}"
         s << "translate([#{left_edge}, 0, 0]) {"
         s << b.to_scad
         s << "}"
 
-        left_edge += (b.width + bldg_spacer)
+        left_edge += (b.width + bldg_x_spacer)
       end
 
     end
@@ -126,6 +136,24 @@ class Area < Model
 
     def buildings
       @buildings ||= []
+    end 
+
+    def note_sorter(n1, n2)
+      note_order = {
+        "C" => 0,
+        "C#" => 1,
+        "D" => 2,
+        "D#" => 3,
+        "E" => 4,
+        "F" => 5, 
+        "F#" => 6, 
+        "G" => 7, 
+        "G#" => 8,
+        "A" => 9,
+        "A#" => 10,
+        "B" => 11
+      }
+      note_order[n1] <=> note_order[n2]
     end
 
 end

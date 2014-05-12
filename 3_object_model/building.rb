@@ -16,13 +16,14 @@ class Building < Model
 
   attr_accessor :layers
 
+  attr_accessor :note
   # TODO Need a place to store the x, y, z translation
 
-  def initialize(x, y, z)
+  def initialize(x, y, z, note)
     @width = x
     @height = y
     @depth = z
-
+    @note = note
     # @window_gutter_x = 1
     # @window_gutter_y = 1
     #
@@ -54,9 +55,9 @@ class Building < Model
     @width *= xscale
     @height *= yscale
 
-    layers.each do |l|
+    layers.each do |k, l|
       l.scale(xscale, yscale)
-
+    end
   end
 
   def to_scad
@@ -72,7 +73,7 @@ class Building < Model
 
         layers.each do |key, layer|
 
-          s << "layer_divider(#{width}, #{1}, #{1}, #{0}, #{layer_start_y_pos}, #{depth});"
+          s << "layer_divider(#{width}, #{1}, #{1}, #{0}, #{layer_start_y_pos}, #{depth});" if layer.height > 4
           s << layer.to_scad(layer_start_y_pos)
 
 

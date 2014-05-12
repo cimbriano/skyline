@@ -23,10 +23,12 @@ a = Area.new(10, 50)
 
 # (10..20).each do |x|
 (20..21).each do |x|
-  b = Building.new(x, (x * 2), 3)
+  b = Building.new(x, (x * 2), 3, "C")
 
   # Default window parameters
   b.make_layers(features[:layers_per_building])
+
+
 
   a.add_building(b)
 end

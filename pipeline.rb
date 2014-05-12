@@ -1,6 +1,6 @@
 require 'fileutils'
 require 'json'
-require 'debugger'
+#require 'debugger'
 
 require './3_object_model/midi.rb'
 require './3_object_model/scad.rb'
@@ -92,6 +92,8 @@ class Pipeline
       model = make_model_from_stats_hash(stats_hash)
 
       model.build
+
+      model.write_out_code("#{scad_file}_prescale.scad")
 
       model.scale
 

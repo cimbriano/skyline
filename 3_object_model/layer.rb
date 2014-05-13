@@ -35,12 +35,12 @@ class Layer < Model
     num_windows_down = (y_density * max_windows_y).to_int
 
     actual_gutter_y = (height - (num_windows_down * window_height)) / (num_windows_down + 1)
-    actual_gutter_x = (width - (num_windows_across + window_width)) / (num_windows_across + 1)
+    actual_gutter_x = (width - (num_windows_across * window_width)) / (num_windows_across + 1)
 
-    for y_index in 1..num_windows_down 
-      for x_index in 1..num_windows_across 
+    for y_index in 1..num_windows_down
+      for x_index in 1..num_windows_across
         in_or_out = [true, false].sample
-        
+
         ytrans = y_index * actual_gutter_y + (y_index - 1)*window_height
         xtrans = x_index * actual_gutter_x + (x_index - 1)*window_width
 

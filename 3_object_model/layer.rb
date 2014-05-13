@@ -70,7 +70,7 @@ class Layer < Model
     @width *= xscale
   end
 
-  def to_scad(trans_y)
+  def to_scad
     scad = []
 
     scad.tap do |s|
@@ -78,7 +78,7 @@ class Layer < Model
 
         s << "union(){"
 
-          s << "layer(#{width}, #{height}, #{building_depth}, 0, #{trans_y}, 0);"
+          s << "layer(#{width}, #{height}, #{building_depth});"
 
           innie_windows.each do |innie|
             s << innie.to_scad

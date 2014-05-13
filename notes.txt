@@ -19,7 +19,6 @@ SCAD
 
 
 TODO
-  * Windows are not being translated.  Wrap layers in a translate like buildings are wrapped
 
 
 IDEA:

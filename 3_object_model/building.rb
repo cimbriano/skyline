@@ -88,8 +88,10 @@ class Building < Model
 
         layers.each do |key, layer|
 
-          s << "layer_divider(#{width}, #{0.5}, #{0.5}, #{0}, #{layer_start_y_pos}, #{depth});" if layer.height > 2
-          s << layer.to_scad(layer_start_y_pos)
+          s << "translate([0, #{layer_start_y_pos}, 0]) {"
+          s << "layer_divider(#{width}, #{0.5}, #{0.5}, #{depth});" if layer.height > 2
+          s << layer.to_scad
+          s << "}"
 
 
           layer_start_y_pos += layer.height

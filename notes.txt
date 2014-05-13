@@ -19,7 +19,7 @@ SCAD
 
 
 TODO
-  * Need to redo layout of windows inside a layer (too much space at the bottom of the layer)
+  * Windows are not being translated.  Wrap layers in a translate like buildings are wrapped
 
 
 IDEA:

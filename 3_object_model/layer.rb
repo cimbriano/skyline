@@ -29,7 +29,12 @@ class Layer < Model
     @window ||= []
   end
 
-  def make_windows(opts = {})
+  def make_windows(x_density, y_density)
+    #make windows here\
+  end
+
+
+  def make_windows_old(opts = {})
     window_width = opts[:window_width] || 4
     window_height = opts[:window_height] || 4
 

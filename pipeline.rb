@@ -89,15 +89,17 @@ class Pipeline
       puts "Doing scad stage for #{@src_path}"
       stats_hash = get_stats_hash(stats_file)
 
-      model = make_model_from_stats_hash(stats_hash)
+      area = make_model_from_stats_hash(stats_hash)
 
-      model.build
+      area.build
 
-      model.write_out_code("#{scad_file}_prescale.scad")
+      # area.write_out_code("#{scad_file}_prescale.scad")
 
-      model.scale
+      area.scale
 
-      model.write_out_code(scad_file)
+      area.add_post_scale_features
+
+      area.write_out_code(scad_file)
     end
 
     def scad_file

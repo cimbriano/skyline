@@ -111,6 +111,13 @@ class Area < Model
   end
 
 
+  def add_post_scale_features
+    buildings.each do |b|
+      b.make_windows(stats['notes'][b.note])
+      # b.do other stuff (i.e. b.add_trees, etc.)
+    end
+  end
+
 
   def to_scad
     scad = []

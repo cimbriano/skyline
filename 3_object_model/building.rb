@@ -51,6 +51,20 @@ class Building < Model
     end
   end
 
+  def make_windows(note_hash)
+    #do something with summary
+    x_density_factor = note_hash['summary']['notes_per_sec']
+    x_density_factor = 1 if x_density_factor > 1
+ 
+    layers.each do |k,l|
+      y_density_factor = note_hash['octaves'][k]['notes_per_sec']
+      y_density_factor = 1 if y_density_factor > 1
+      l.make_windows(x_density_factor, y_density_factor)
+    end
+
+  end
+
+
   def scale(xscale, yscale)
     @width *= xscale
     @height *= yscale
@@ -73,7 +87,7 @@ class Building < Model
 
         layers.each do |key, layer|
 
-          s << "layer_divider(#{width}, #{1}, #{1}, #{0}, #{layer_start_y_pos}, #{depth});" if layer.height > 4
+          s << "layer_divider(#{width}, #{0.5}, #{0.5}, #{0}, #{layer_start_y_pos}, #{depth});" if layer.height > 2
           s << layer.to_scad(layer_start_y_pos)
 
 

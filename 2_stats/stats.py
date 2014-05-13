@@ -13,6 +13,25 @@ import json
 # def freneticity(col):
 #     return np.diff(col).mean()
 
+note_keys = {
+  -7 : ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#'],
+  -6 : ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'F'],
+  -5 : ['C#', 'D#', 'F', 'F#', 'G#', 'A#', 'C'],
+  -4 : ['G#', 'A#', 'C', 'C#', 'D#', 'F', 'G'],
+  -3 : ['D#', 'F', 'G', 'G#', 'A#', 'C', 'D'],
+  -2 : ['A#', 'C', 'D', 'D#', 'F', 'G', 'A'],
+  -1 : ['F', 'G', 'A', 'A#', 'C', 'D', 'E'],
+  0 : ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
+  1 : ['G', 'A', 'B', 'C', 'D', 'E', 'F#'],
+  2 : ['D', 'E', 'F#', 'G', 'A', 'B', 'C#'],
+  3 : ['A', 'B', 'C#', 'D', 'E', 'F#', 'G#'],
+  4 : ['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#'],
+  5 : ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#'],
+  6 : ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'F'],
+  7 : ['C#', 'D#', 'F', 'F#', 'G#', 'A#', 'C']
+}
+
+
 
 def main():
     parser = argparse.ArgumentParser(prog='stats')
@@ -47,7 +66,7 @@ def main():
     sumtotLen = sumagg_df.duration.sum()
     sumtotLenRank = sumagg_df.duration.sum().rank(ascending=True)
     sumavgVel = sumagg_df.velocity.mean()
-    sumfreq = (sumcnt * 1000.0)/(sumagg_df.time_off.max()-sumagg_df.time_on.min())
+    sumNotePerSec = (sumcnt * 1000.0)/(sumagg_df.time_off.max()-sumagg_df.time_on.min())
     sumOctCount = sumagg_df.octave.nunique()
     sumOctRange = sumagg_df.octave.max()-sumagg_df.octave.min() + 1
 
@@ -56,7 +75,7 @@ def main():
     sumtotLen.name = 'totLen'
     sumtotLenRank.name = 'totLenRank'
     sumavgVel.name = 'avgVel'
-    sumfreq.name = 'frequency'
+    sumNotePerSec.name = 'notes_per_sec'
     sumOctCount.name = 'octave_count'
     sumOctRange.name = 'octave_range'
 
@@ -65,7 +84,7 @@ def main():
     avgLen = agg_df.duration.mean()
     totLen = agg_df.duration.sum()
     avgVel = agg_df.velocity.mean()
-    freq = (cnt*1000.0)/(agg_df.time_off.max()-agg_df.time_on.min())
+    notePerSec = (cnt*1000.0)/(agg_df.time_off.max()-agg_df.time_on.min())
     # timeBtwn = agg_df.time_on.apply(freneticity)
     # timeBtwn.fillna(0, inplace=True)
 
@@ -74,11 +93,11 @@ def main():
     avgLen.name = 'avgLen'
     totLen.name = 'totLen'
     avgVel.name = 'avgVel'
-    freq.name = 'frequency'
+    notePerSec.name = 'notes_per_sec'
     # timeBtwn.name = 'timeBetween'
     
-    ans  = pd.concat([cnt, avgVel, avgLen, totLen, freq], axis=1)
-    sumans  = pd.concat([sumcnt, sumavgVel, sumavgLen, sumtotLen, sumtotLenRank, sumfreq, sumOctRange, sumOctCount], axis=1)
+    ans  = pd.concat([cnt, avgVel, avgLen, totLen, notePerSec], axis=1)
+    sumans  = pd.concat([sumcnt, sumavgVel, sumavgLen, sumtotLen, sumtotLenRank, sumNotePerSec, sumOctRange, sumOctCount], axis=1)
     songans = {'length' : song_length, 'notes_per_sec':notes_per_sec, 'total_notes':total_notes, 
                'avgLen':song_avg_len, 'avgVel':song_avg_vel, 'high_note':high_note, 'low_note':low_note,'note_range':note_range}
     ansdict = {'song':{}, 'instruments':{},'notes':{}}

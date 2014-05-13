@@ -59,6 +59,7 @@ class Building < Model
     layers.each do |k,l|
       y_density_factor = note_hash['octaves'][k]['notes_per_sec']
       y_density_factor = 1 if y_density_factor > 1
+      
       l.make_windows(x_density_factor, y_density_factor)
     end
 

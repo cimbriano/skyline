@@ -4,9 +4,9 @@ require './3_object_model/window.rb'
 class Layer < Model
   attr_accessor :height, :width, :depth
 
-  attr_accessor :border_x, :border_y
-
   attr_accessor :window_gutter_x, :window_gutter_y
+
+  attr_accessor :window_height, :window_width, :window_depth
 
   attr_accessor :building_depth
 
@@ -14,11 +14,12 @@ class Layer < Model
     @width = x
     @height = y
 
-    @window_gutter_x = 1
-    @window_gutter_y = 1
+    @window_gutter_x = 0.5
+    @window_gutter_y = 0.5
 
-    @border_x = 1
-    @border_y = 1
+    @window_height = 2
+    @window_width = 1
+    @window_depth = 0.5
 
     @building_depth = building_depth
 
@@ -30,58 +31,30 @@ class Layer < Model
   end
 
   def make_windows(x_density, y_density)
-    #make windows here\
-  end
+    num_windows_across = (x_density * max_windows_x).to_int
+    num_windows_down = (y_density * max_windows_y).to_int
 
+    actual_gutter_y = (height - (num_windows_down * window_height)) / (num_windows_down + 1)
+    actual_gutter_x = (width - (num_windows_across + window_width)) / (num_windows_across + 1)
 
-  def make_windows_old(opts = {})
-    window_width = opts[:window_width] || 4
-    window_height = opts[:window_height] || 4
-
-
-    # puts "height: #{height}"
-    # puts "width : #{width}"
-    # puts "window_width : #{window_width}"
-    # puts "window_height : #{window_height}"
-
-    # How many windows fit
-    num_windows_across = (width - (2 * border_x) + window_gutter_x) / (window_width + window_gutter_x)
-    num_windows_down   = (height - (2 * border_y) + window_gutter_y) / (window_height + window_gutter_y)
-
-    # puts "!Windows across : #{num_windows_across}"
-    # puts "!Windows down :   #{num_windows_down}"
-
-    # How much extra space for the left and right most edge gutter
-    horizontal_used_space = (num_windows_across * window_width) + ((num_windows_across - 1) * window_gutter_x)
-    # puts "Horizontal Space used : #{horizontal_used_space}"
-
-    start_pos_x = ( (width  - horizontal_used_space).to_f ) / 2
-    # puts "start_pos_x : #{start_pos_x}"
-
-    # Bottom left corner of the top most window.
-    top_window_y = height - border_y - window_height
-    # puts "top_window_y : #{top_window_y}"
-
-    horizontal_maximum = width - (border_x + window_width)
-
-    vertical_minimum = border_y + window_height
-
-    top_window_y.step(vertical_minimum, -(window_height + window_gutter_y)) do |y|
-      # puts "y : #{y}"
-
-      window_y_trans = y + @trans_y # Windiow's relative position (y) plus the layer's translation (trans_y)
-
-      (start_pos_x..horizontal_maximum).step(window_width + window_gutter_x) do |x|
-        # puts "x : #{x}"
-
-        window_depth = 1
-
+    for y_index in 1..num_windows_down 
+      for x_index in 1..num_windows_across 
         in_or_out = [true, false].sample
+        
+        ytrans = y_index * actual_gutter_y + (y_index - 1)*window_height
+        xtrans = x_index * actual_gutter_x + (x_index - 1)*window_width
 
-        windows << Window.new(window_width, window_height, window_depth, x, window_y_trans, building_depth - window_depth, in_or_out)
-
+        windows << Window.new(window_width, window_height, window_depth, xtrans, ytrans, building_depth - window_depth, in_or_out)
       end
     end
+  end
+
+  def max_windows_x
+    ( ( width - window_gutter_x ) / (window_width + window_gutter_x) ).to_int
+  end
+
+  def max_windows_y
+    ( ( height - window_gutter_y ) / (window_height + window_gutter_y) ).to_int
   end
 
   def innie_windows

@@ -12,14 +12,21 @@ module MIDI
 
         mr.each do |item|
 
-          if item.code == NOTE_ON then
+          if item.code == NOTE_ON and item.data2 != 0 then
             if note_buffer.include? item.data1 then
+
+              # This might be a velocity 0 note (that's ok)
+
+              # Otherwise error
+              puts note_buffer[item.data1]
+              puts item
               raise "Found two consecutive ON for note: #{item.data1}"
             else
+
               note_buffer[item.data1] = item
             end
 
-          elsif item.code == NOTE_OFF
+          elsif item.code == NOTE_OFF or (item.code == NOTE_ON and item.data2 == 0)
 
             if note_buffer.include? item.data1 then
               # Create a Note
@@ -31,6 +38,7 @@ module MIDI
               # Remove from Buffer
               note_buffer.delete(item.data1)
             else
+              puts item
               raise "Found an OFF without an ON for note: #{item.data1}"
             end
           end

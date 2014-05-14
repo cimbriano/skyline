@@ -17,9 +17,9 @@ class Layer < Model
     @window_gutter_x = 0.5
     @window_gutter_y = 0.5
 
-    @window_height = 2
+    @window_height = 1
     @window_width = 1
-    @window_depth = 0.5
+    @window_depth = 1
 
     @building_depth = building_depth
 
@@ -39,7 +39,7 @@ class Layer < Model
 
     for y_index in 1..num_windows_down
       for x_index in 1..num_windows_across
-        in_or_out = [true, false].sample
+        in_or_out = false
 
         ytrans = y_index * actual_gutter_y + (y_index - 1)*window_height
         xtrans = x_index * actual_gutter_x + (x_index - 1)*window_width

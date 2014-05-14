@@ -136,7 +136,7 @@ class Area < Model
         puts "writing scad for building #{b.note}"
         s << "translate([#{left_edge}, 0, 0]) {"
         s << b.to_scad
-        s << "}"
+        s << "}\n"
 
         left_edge += (b.width + bldg_x_spacer)
       end

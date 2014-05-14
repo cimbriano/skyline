@@ -126,7 +126,7 @@ class Area < Model
 
       # Add the connecting base to all the buildings
       base_z = buildings.map {|b| b.depth }.max
-      s << "base(#{width}, #{1}, #{base_z}, #{0}, #{-1}, #{0})"
+      s << "base(#{width}, #{1}, #{base_z}, #{0}, #{-1}, #{0});"
 
       # Sort the buildings in Note order (C, C#, D, D# ... )
       buildings.sort! {|b1,b2| note_sorter(b1.note, b2.note)}

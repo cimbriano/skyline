@@ -48,7 +48,7 @@ class Area < Model
 
     aspect_ratio = @width.to_f / @height
     yscale_factor = @max_height / @height.to_f
-    xscale_factor = @max_width / @width.to_f 
+    xscale_factor = @max_width / @width.to_f
 
     #area is too high.  need to scale down
     #both are higher than max, use yscale_for both nuless its not enough for x
@@ -57,7 +57,7 @@ class Area < Model
       if yscale_factor < xscale_factor
         xscale_factor = yscale_factor
       end
-    #heights too high, but width doesn't care... 
+    #heights too high, but width doesn't care...
     #scale down with y
     elsif @height > @max_height and @width <= @max_width
         xscale_factor = yscale_factor
@@ -65,7 +65,7 @@ class Area < Model
     #too short and wide... scale up y and down x
     elsif @height <= @max_height and @width > @max_width
       # nothing here yet
-    
+
     #too short and too narrow
     #scale up y and use that scale for x unless it's too much
     else
@@ -124,7 +124,12 @@ class Area < Model
     scad.tap do |s|
       s << "area(#{width}, #{height});"
 
-      buildings.sort! {|b1,b2| note_sorter(b1.note, b2.note)} 
+      # Add the connecting base to all the buildings
+      base_z = buildings.map {|b| b.depth }.max
+      s << "base(#{width}, #{1}, #{base_z}, #{0}, #{-1}, #{0})"
+
+      # Sort the buildings in Note order (C, C#, D, D# ... )
+      buildings.sort! {|b1,b2| note_sorter(b1.note, b2.note)}
 
       left_edge = bldg_x_spacer
       buildings.each do |b|
@@ -135,7 +140,6 @@ class Area < Model
 
         left_edge += (b.width + bldg_x_spacer)
       end
-
     end
   end
 
@@ -143,7 +147,7 @@ class Area < Model
 
     def buildings
       @buildings ||= []
-    end 
+    end
 
     def note_sorter(n1, n2)
       note_order = {
@@ -152,9 +156,9 @@ class Area < Model
         "D" => 2,
         "D#" => 3,
         "E" => 4,
-        "F" => 5, 
-        "F#" => 6, 
-        "G" => 7, 
+        "F" => 5,
+        "F#" => 6,
+        "G" => 7,
         "G#" => 8,
         "A" => 9,
         "A#" => 10,

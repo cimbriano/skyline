@@ -5,7 +5,7 @@ class Model
 end
 
 module Scadable
-  @@scad_libs = ['area.scad', 'layer.scad', 'layer_divider.scad', 'window.scad']
+  @@scad_libs = ['area.scad', 'layer.scad', 'layer_divider.scad', 'window.scad', 'base.scad']
 
   def write_out_code(outfile='out.scad')
     header = []

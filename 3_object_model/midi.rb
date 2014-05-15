@@ -23,7 +23,7 @@ module MIDI
               raise "Found two consecutive ON for note: #{item.data1}"
             else
 
-              note_buffer[item.data1] = item
+              note_buffer[item.data1] = item  
             end
 
           elsif item.code == NOTE_OFF or (item.code == NOTE_ON and item.data2 == 0)

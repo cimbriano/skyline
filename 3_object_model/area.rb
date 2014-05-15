@@ -15,8 +15,6 @@ class Area < Model
     @width = 10 # default
     @bldg_x_spacer = 5
     @bldg_y_spacer = 10
-    @max_height = 70
-    @max_width = 140
   end
 
   def build
@@ -46,32 +44,27 @@ class Area < Model
     @width = required_area_width if @width < required_area_width
     @height = required_area_height
 
-    aspect_ratio = @width.to_f / @height
-    yscale_factor = @max_height / @height.to_f
-    xscale_factor = @max_width / @width.to_f
+    yscale_factor = tgt_height / @height.to_f
+    xscale_factor = tgt_width / @width.to_f
 
-    #area is too high.  need to scale down
-    #both are higher than max, use yscale_for both nuless its not enough for x
-    if @height > @max_height and @width > @max_width
-      # if scaling in the y is more severe than the x, just use the y
-      if yscale_factor < xscale_factor
+    puts "height: #{height}"
+    puts "width: #{width}"
+    puts "orig aspect_ratio: #{aspect_ratio}"
+    puts "xscale: #{xscale_factor}"
+    puts "yscale: #{yscale_factor}"
+
+
+    if shape == 'square'
+      puts "SQUARE"
+      if xscale_factor < yscale_factor
+        yscale_factor = xscale_factor
+      else
         xscale_factor = yscale_factor
       end
-    #heights too high, but width doesn't care...
-    #scale down with y
-    elsif @height > @max_height and @width <= @max_width
-        xscale_factor = yscale_factor
+      puts "xscale: #{xscale_factor}"
+      puts "yscale: #{yscale_factor}"
 
-    #too short and wide... scale up y and down x
-    elsif @height <= @max_height and @width > @max_width
-      # nothing here yet
 
-    #too short and too narrow
-    #scale up y and use that scale for x unless it's too much
-    else
-      if yscale_factor < xscale_factor
-        xscale_factor = yscale_factor
-      end
     end
 
     @bldg_x_spacer *= xscale_factor
@@ -105,6 +98,44 @@ class Area < Model
 
     sum
   end
+
+  def aspect_ratio
+    width.to_f / height
+  end
+
+  def shape
+    if aspect_ratio < 0.7
+      'vertical'
+    elsif aspect_ratio >= 0.7 and aspect_ratio < 1.3
+      'square'
+    else
+      'horizontal'
+    end
+  end
+
+  def tgt_height
+    case shape
+    when 'vertical'
+      140
+    when 'square'
+      100
+    when 'horizontal'
+      70
+    end
+  end
+
+
+  def tgt_width
+    case shape
+    when 'vertical'
+      70
+    when 'square'
+      100
+    when 'horizontal'
+      140
+    end
+  end
+
 
   def required_area_height
     buildings.map {|b| b.height }.max + bldg_y_spacer

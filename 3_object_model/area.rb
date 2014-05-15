@@ -153,7 +153,11 @@ class Area < Model
   def to_scad
     scad = []
     scad.tap do |s|
-      s << "area(#{width}, #{height});"
+
+      # Wrap in a rotate and translate
+      s << "translate([0, 0, -30]) {"
+      s << "rotate([90, 0, 65]) {"
+      s << "translate([#{@width / -2}, 0, 0]) {"
 
       # Add the connecting base to all the buildings
       base_z = buildings.map {|b| b.depth }.max
@@ -171,6 +175,10 @@ class Area < Model
 
         left_edge += (b.width + bldg_x_spacer)
       end
+
+      s << "}" # Close translate
+      s << "}" # Close rotate
+      s << "}" # Close translate
     end
   end
 

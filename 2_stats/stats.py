@@ -10,6 +10,16 @@ import pandas as pd
 import numpy as np
 import json
 
+
+def _jsonable(o):
+    if isinstance(o, np.integer):
+        return int(o)
+    if isinstance(o, np.floating):
+        return float(o)
+    if isinstance(o, np.ndarray):
+        return o.tolist()
+    raise TypeError(f'Object of type {o.__class__.__name__} is not JSON serializable')
+
 # def freneticity(col):
 #     return np.diff(col).mean()
 
@@ -48,7 +58,7 @@ def main():
     note_file = args.note_file
     stats_file = args.stats_file
     
-    print "Reading notes from: " + note_file
+    print("Reading notes from: " + note_file)
     note_df = pd.read_csv(note_file)
 
     song_length = (note_df.time_off.max() - note_df.time_on.min()) / 1000.0
@@ -103,7 +113,7 @@ def main():
     ansdict = {'song':{}, 'instruments':{},'notes':{}}
 
     for (letter,octave), r in ans.iterrows():
-        if not ansdict['notes'].has_key(letter): 
+        if letter not in ansdict['notes']:
             ansdict['notes'][letter] = {'octaves': {}}
         ansdict['notes'][letter]['octaves'][octave] = r.to_dict()
     
@@ -112,8 +122,8 @@ def main():
     ansdict['song']['summary'] = songans
 
     with open(stats_file, 'w') as stats_json:
-        print "Writing json to: " + stats_file
-        json.dump(ansdict, stats_json)
+        print("Writing json to: " + stats_file)
+        json.dump(ansdict, stats_json, default=_jsonable)
 
 if __name__ == '__main__':
     main()
